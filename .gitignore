@@ -2,4 +2,5 @@
 .env
 bin
 vendor
+tmp
 *_templ.go*

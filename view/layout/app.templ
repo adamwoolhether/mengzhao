@@ -1,5 +1,7 @@
 package layout
 
+import "mengzhao/view/ui"
+
 templ App (nav bool) {
    <!DOCTYPE html>
     <html lang="en" data-theme="dark">
@@ -15,7 +17,7 @@ templ App (nav bool) {
     </head>
     <body class="antialiased">
         if nav {
-            navigation
+            @ui.Navigation()
         }
         { children... }
     </body>
