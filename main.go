@@ -23,7 +23,12 @@ func main() {
 
 	router := chi.NewMux()
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
-	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
+	router.Get("/login", handler.Make(handler.Login))
+
+	router.Group(func(r chi.Router) {
+		r.Use(handler.WithUser)
+		r.Get("/", handler.Make(handler.HandleHomeIndex))
+	})
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 
