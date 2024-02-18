@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"mengzhao/handler"
+	"mengzhao/pkg/supabase"
 )
 
 //go:embed public
@@ -21,9 +22,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := supabase.Connect(); err != nil {
+		log.Fatal(err)
+	}
+
 	router := chi.NewMux()
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
-	router.Get("/login", handler.Make(handler.Login))
+	router.Get("/login", handler.Make(handler.LoginIndex))
+	router.Post("/login", handler.Make(handler.Login))
 
 	router.Group(func(r chi.Router) {
 		r.Use(handler.WithUser)
