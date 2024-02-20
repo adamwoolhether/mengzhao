@@ -1,6 +1,5 @@
 install:
 	go install github.com/a-h/templ/cmd/templ@latest
-	go get ./...
 	npm install -D tailwindcss
 	npx tailwindcss init
 	npm install -D daisyui@latest

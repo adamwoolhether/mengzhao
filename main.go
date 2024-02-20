@@ -30,6 +30,8 @@ func main() {
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
 	router.Get("/login", handler.Make(handler.LoginIndex))
 	router.Post("/login", handler.Make(handler.Login))
+	router.Get("/signup", handler.Make(handler.SignupIndex))
+	router.Post("/signup", handler.Make(handler.Signup))
 
 	router.Group(func(r chi.Router) {
 		r.Use(handler.WithUser)

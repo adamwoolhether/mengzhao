@@ -9,10 +9,7 @@ import (
 
 func WithUser(next http.Handler) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
-		user := types.AuthenticatedUser{
-			Email:    "adam@gmail.com",
-			LoggedIn: true,
-		}
+		var user types.AuthenticatedUser
 		ctx := context.WithValue(r.Context(), types.UserCtxKey, user)
 
 		next.ServeHTTP(w, r.WithContext(ctx))

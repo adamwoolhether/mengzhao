@@ -1336,8 +1336,8 @@ html {
   width: 100%;
 }
 
-.max-w-screen-sm {
-  max-width: 640px;
+.max-w-md {
+  max-width: 28rem;
 }
 
 .flex-1 {
@@ -1395,9 +1395,9 @@ html {
   padding-right: 0.25rem;
 }
 
-.px-16 {
-  padding-left: 4rem;
-  padding-right: 4rem;
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .py-12 {
@@ -1433,6 +1433,10 @@ html {
   font-weight: 900;
 }
 
+.font-semibold {
+  font-weight: 600;
+}
+
 .text-error {
   --tw-text-opacity: 1;
   color: var(--fallback-er,oklch(var(--er)/var(--tw-text-opacity)));
@@ -1446,6 +1450,11 @@ html {
 .text-secondary {
   --tw-text-opacity: 1;
   color: var(--fallback-s,oklch(var(--s)/var(--tw-text-opacity)));
+}
+
+.text-success {
+  --tw-text-opacity: 1;
+  color: var(--fallback-su,oklch(var(--su)/var(--tw-text-opacity)));
 }
 
 .antialiased {

@@ -11,8 +11,45 @@ import (
 	"github.com/nedpals/supabase-go"
 
 	sb "mengzhao/pkg/supabase"
+	"mengzhao/pkg/validate"
 	"mengzhao/view/auth"
 )
+
+func SignupIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(w, r, auth.Signup())
+}
+
+func Signup(w http.ResponseWriter, r *http.Request) error {
+	params := auth.SignupParams{
+		Email:           r.FormValue("email"),
+		Password:        r.FormValue("password"),
+		ConfirmPassword: r.FormValue("confirmPassword"),
+	}
+
+	var errors auth.SignupErrors
+	validator := validate.New(&params, validate.Fields{
+		"Email":           validate.Rules(validate.Email),
+		"Password":        validate.Rules(validate.Password),
+		"ConfirmPassword": validate.Rules(validate.Equal(params.Password), validate.Message("Passwords don't match")),
+	})
+
+	if !validator.Validate(&errors) {
+		slog.Info("ERR", errors)
+		slog.Info("PARAM", params)
+		return render(w, r, auth.SignupForm(params, errors))
+	}
+
+	sbUser, err := sb.Client.Auth.SignUp(r.Context(), supabase.UserCredentials{
+		Email:    params.Email,
+		Password: params.Password,
+		//Data:     nil,
+	})
+	if err != nil {
+		return err
+	}
+
+	return render(w, r, auth.SignupSuccessful(sbUser.Email))
+}
 
 func LoginIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(w, r, auth.Login())
@@ -23,16 +60,6 @@ func Login(w http.ResponseWriter, r *http.Request) error {
 		Email:    r.FormValue("email"),
 		Password: r.FormValue("password"),
 		//Data:     nil,
-	}
-
-	if !validEmail(credentials.Email) {
-		errs := auth.LoginErrors{Email: "Please enter a valid email address"}
-		return render(w, r, auth.LoginForm(credentials, errs))
-	}
-
-	if reason, ok := validPassword(credentials.Password); !ok {
-		errs := auth.LoginErrors{Password: reason}
-		return render(w, r, auth.LoginForm(credentials, errs))
 	}
 
 	resp, err := sb.Client.Auth.SignIn(r.Context(), credentials)

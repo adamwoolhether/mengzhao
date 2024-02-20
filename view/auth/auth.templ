@@ -5,10 +5,85 @@ import (
 	"github.com/nedpals/supabase-go"
 )
 
+templ Signup() {
+    @layout.App(false) {
+		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
+			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
+				<h1 class="text-center text-xl font-black mb-10">Signup to MengZhao</h1>
+					@SignupForm(SignupParams{}, SignupErrors{})
+			</div>
+		</div>
+	}
+}
+
+
+
+type SignupParams struct {
+   Email string
+   Password string
+   ConfirmPassword string
+}
+
+type SignupErrors struct {
+   Email string
+   Password string
+   ConfirmPassword string
+}
+
+templ SignupForm(params SignupParams, errors SignupErrors) {
+	<form
+			hx-post="/signup"
+			hx-swap="outerHTML"
+			class="space-y-4"
+	>
+		<div class="w-full">
+			<div class="label">
+				<span class="label-text-alt">Email Address</span>
+			</div>
+			<input type="email" value={ params.Email} name="email" required placeholder="Type here" class="input input-bordered w-full"/>
+			if len(errors.Email) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Email }</span>
+				</div>
+			}
+		</div>
+		<div class="w-full">
+			<div class="label">
+				<span class="label-text-alt">Password</span>
+			</div>
+			<input type="password" name="password" required autocomplete="off" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Password }</span>
+				</div>
+			}
+		</div>
+		<div class="w-full">
+			<div class="label">
+				<span class="label-text-alt">Confirm Password</span>
+			</div>
+			<input type="password" name="confirmPassword" required autocomplete="off" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.ConfirmPassword }</span>
+				</div>
+			}
+		</div>
+		<button type="submit" class="btn btn-primary w-full">Login <i class="fa-solid fa-arrow-right"></i></button>
+	</form>
+}
+
+
+templ SignupSuccessful(email string) {
+   <div>Confirmation email sent to :<span class="font-semibold text-success">{ email }</span></div>
+}
+
+// /////////////////////////////////////////////////////////////////
+
 templ Login() {
     @layout.App(false) {
 		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
-			<div class="max-w-screen-sm w-full bg-base-300 py-12 px-16 rounded-xl">
+			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
 				<h1 class="text-center text-xl font-black mb-10">Login to MengZhao</h1>
 					@LoginForm(supabase.UserCredentials{}, LoginErrors{})
 			</div>
