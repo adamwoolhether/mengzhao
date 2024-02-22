@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
+
+	"github.com/gorilla/sessions"
 
 	sb "mengzhao/pkg/supabase"
 	"mengzhao/types"
@@ -18,13 +21,15 @@ func WithUser(next http.Handler) http.Handler {
 			return
 		}
 
-		cookie, err := r.Cookie("access_token")
+		store := sessions.NewCookieStore([]byte(os.Getenv(sessionEnvVar)))
+		session, err := store.Get(r, sessionUserKey)
 		if err != nil {
 			next.ServeHTTP(w, r)
 			return
 		}
+		accessToken := session.Values[sessionAccessTokenKey] // UNSAFE
 
-		resp, err := sb.Client.Auth.User(r.Context(), cookie.Value)
+		resp, err := sb.Client.Auth.User(r.Context(), accessToken.(string))
 		if err != nil {
 			next.ServeHTTP(w, r)
 			return
