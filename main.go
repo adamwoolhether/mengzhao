@@ -27,15 +27,20 @@ func main() {
 	}
 
 	router := chi.NewMux()
+	router.Use(handler.WithUser)
+
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
+	router.Get("/", handler.Make(handler.HandleHomeIndex))
 	router.Get("/login", handler.Make(handler.LoginIndex))
 	router.Post("/login", handler.Make(handler.Login))
+	router.Post("/logout", handler.Make(handler.Logout))
 	router.Get("/signup", handler.Make(handler.SignupIndex))
 	router.Post("/signup", handler.Make(handler.Signup))
+	router.Get("/auth/callback", handler.Make(handler.AuthCallback))
 
 	router.Group(func(r chi.Router) {
-		r.Use(handler.WithUser)
-		r.Get("/", handler.Make(handler.HandleHomeIndex))
+		r.Use(handler.WithAuth)
+		r.Get("/settings", handler.Make(handler.SettingsIndex))
 	})
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")

@@ -19,7 +19,7 @@ templ Navigation() {
                             </summary>
                             <ul class="p-2 bg-base-100 rounded-t-none">
                                 <li><a>Settings</a></li>
-                                <li><a>Logout 2</a></li>
+                                @LogoutForm()
                             </ul>
                         </details>
                     </li>
@@ -29,4 +29,10 @@ templ Navigation() {
             </ul>
         </div>
     </div>
+}
+
+templ LogoutForm() {
+    <form method="POST" action="/logout">
+       <li><button type="submit" class="btn btn-link">Logout</button></li>
+    </form>
 }

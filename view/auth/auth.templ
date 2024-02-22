@@ -75,7 +75,7 @@ templ SignupForm(params SignupParams, errors SignupErrors) {
 
 
 templ SignupSuccessful(email string) {
-   <div>Confirmation email sent to :<span class="font-semibold text-success">{ email }</span></div>
+   <div>Confirmation email sent to: <span class="font-semibold text-success">{ email }</span></div>
 }
 
 // /////////////////////////////////////////////////////////////////
@@ -134,4 +134,12 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 		}
 		<button type="submit" class="btn btn-primary w-full">Login <i class="fa-solid fa-arrow-right"></i></button>
 	</form>
+}
+
+templ CallbackScript() {
+    <script>
+        var url = window.location.href;
+        var newURL = url.replace("#", "?");
+        window.location = newURL;
+    </script>
 }

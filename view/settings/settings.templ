@@ -1,0 +1,12 @@
+package settings
+
+import "mengzhao/view/layout"
+import "mengzhao/types"
+
+templ Index(user types.AuthenticatedUser) {
+    @layout.App(true) {
+        <div>
+            Hello there { user.Email }
+        </div>
+    }
+}

@@ -3,10 +3,7 @@ package handler
 import (
 	"log/slog"
 	"net/http"
-	"regexp"
-	"strings"
 	"time"
-	"unicode"
 
 	"github.com/nedpals/supabase-go"
 
@@ -69,9 +66,45 @@ func Login(w http.ResponseWriter, r *http.Request) error {
 		return render(w, r, auth.LoginForm(credentials, errs))
 	}
 
+	setAuthCookie(w, resp.AccessToken)
+
+	return htmxRedirect(w, r, "/")
+}
+
+func AuthCallback(w http.ResponseWriter, r *http.Request) error {
+	accessToken := r.URL.Query().Get("access_token")
+	if len(accessToken) == 0 {
+		return render(w, r, auth.CallbackScript())
+	}
+
+	setAuthCookie(w, accessToken)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+	return nil
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) error {
+	cookie := http.Cookie{
+		Value:    "",
+		Name:     "access_token",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	}
+
+	http.SetCookie(w, &cookie)
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+	return nil
+}
+
+func setAuthCookie(w http.ResponseWriter, accessToken string) {
 	cookie := http.Cookie{
 		Name:  "access_token",
-		Value: resp.AccessToken,
+		Value: accessToken,
 		Path:  "/",
 		//Domain:     "",
 		Expires: time.Time{},
@@ -85,57 +118,4 @@ func Login(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	http.SetCookie(w, &cookie)
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////
-
-var emailRegex = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-
-func validEmail(email string) bool {
-	return emailRegex.MatchString(email)
-}
-
-func validPassword(password string) (string, bool) {
-	var (
-		hasUpper     = false
-		hasLower     = false
-		hasNumber    = false
-		hasSpecial   = false
-		specialRunes = "!@#$%^&*()-+=[]{}|;:,.<>/?"
-	)
-
-	if len(password) < 8 {
-		return "Password must be at least 8 characters long", false
-	}
-
-	for _, char := range password {
-		switch {
-		case unicode.IsUpper(char):
-			hasUpper = true
-		case unicode.IsLower(char):
-			hasLower = true
-		case unicode.IsDigit(char):
-			hasNumber = true
-		case unicode.IsPunct(char) || unicode.IsSymbol(char) || strings.ContainsRune(specialRunes, char):
-			hasSpecial = true
-		}
-	}
-
-	if !hasUpper {
-		return "Password must contain at least 1 uppercase character", false
-	}
-	if !hasLower {
-		return "Password must contain at least 1 lowercase character", false
-	}
-	if !hasNumber {
-		return "Password must contain at least 1 numeric character (0, 1, 2, ...)", false
-	}
-	if !hasSpecial {
-		return "Password must contain at least 1 special character (@, ;, _, ...)", false
-	}
-
-	return "", true
 }
