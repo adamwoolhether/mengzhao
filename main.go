@@ -2,10 +2,12 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -49,12 +51,36 @@ func main() {
 	router.Group(func(r chi.Router) {
 		r.Use(handler.WithAccountSetup)
 		r.Get("/settings", handler.Make(handler.SettingsIndex))
+		r.Put("/settings/account/profile", handler.Make(handler.SettingsUpdate))
 	})
+
+	router.Get("/refresh", refresh)
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 
 	slog.Info("app running", "port", port)
-	if err := http.ListenAndServe(port, router); err != nil {
+	if err := http.ListenAndServe("localhost"+port, router); err != nil {
 		log.Fatal(err)
 	}
+}
+
+var once sync.Once
+
+func refresh(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
+		return
+	}
+
+	flusher.Flush()
+
+	once.Do(func() {
+		fmt.Fprint(w, "data: refresh\n\n")
+		flusher.Flush()
+	})
+
+	// block forever to keep event listener from constantly reconnecting
+	<-make(chan struct{})
 }

@@ -5,10 +5,72 @@ import (
     "mengzhao/types"
 )
 
+type ProfileParams struct {
+   Username string
+   Success bool
+}
+
+type ProfileErrors struct {
+   Username string
+}
+
 templ Index(user types.AuthenticatedUser) {
     @layout.App(true) {
-        <div class="max-w-2xl w-full mx-auto mt-4">
-            account
+        <div class="max-w-2xl w-full mx-auto mt-8">
+            <div>
+                <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Profile Settings</h1>
+                @ProfileForm(ProfileParams{Username: user.Account.Username}, ProfileErrors{})
+            </div>
+            <div>
+                <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Change Password</h1>
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+                    <dt class="">Current Password</dt>
+                    <dd class="sm:col-span-2 sm:mt-0">
+                        <input class="input input-bordered w-full max-w-sm"/>
+                    </dd>
+                    <dt class="">New Password</dt>
+                    <dd class="sm:col-span-2 sm:mt-0">
+                        <input class="input input-bordered w-full max-w-sm"/>
+                    </dd>
+                    <dt></dt>
+                    <dd class="sm:col-span-2 sm:mt-0">
+                        <button class="btn btn-primary">Update Password</button>
+                    </dd>
+                </div>
+            </div>
         </div>
     }
+}
+
+templ ProfileForm(params ProfileParams, errors ProfileErrors) {
+    <form
+        hx-put="/settings/account/profile"
+        hx-swap="outerHTML"
+    >
+    <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+        <dt class="">Username</dt>
+        <dd class="sm:col-span-2 sm:mt-0">
+            if params.Success {
+                <div class="toast toast-top toast-end">
+                    <div class="alert alert-success">
+                        <span>Username updated successfully!</span>
+                    </div>
+                </div>
+            }
+
+            <input
+                class="input input-bordered w-full max-w-sm"
+                value={ params.Username }
+                name="username"
+            />
+            if len(errors.Username) > 0 {
+                <div class="text-sm text-error mt-1">{ errors.Username }</div>
+            }
+        </dd>
+        <dt></dt>
+        <dd class="sm:col-span-2 sm:mt-0">
+            <button class="btn btn-primary">Save</button>
+        </dd>
+    </div>
+    </form>
 }

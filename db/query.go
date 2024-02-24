@@ -27,3 +27,12 @@ func CreateAccount(ctx context.Context, account *types.Account) error {
 
 	return nil
 }
+
+func UpdateAccount(ctx context.Context, account *types.Account) error {
+	_, err := Bun.NewUpdate().Model(account).WherePK().Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

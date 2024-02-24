@@ -1,4 +1,5 @@
 install:
+	go install github.com/bokwoon95/wgo@latest
 	go install github.com/a-h/templ/cmd/templ@latest
 	npm install -D tailwindcss
 	npx tailwindcss init
@@ -9,14 +10,8 @@ build:
 	templ generate view
 	go build -o bin/mengzhao main.go
 
-templ:
-	templ generate -watch -proxy=http://localhost:42069
-
-tailwind:
-	npx tailwindcss -i view/css/app.css -o public/styles.css --watch
-
-run: build
-	./bin/mengzhao
+run:
+	wgo -file=.go -file=.templ -xfile=_templ.go templ generate :: npx tailwindcss -i view/css/app.css -o public/styles.css :: go run main.go
 
 up:
 	go run cmd/migrate/main.go up
