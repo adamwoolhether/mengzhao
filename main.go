@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 
+	"mengzhao/db"
 	"mengzhao/handler"
 	"mengzhao/pkg/supabase"
 )
@@ -19,6 +20,10 @@ var FS embed.FS
 
 func main() {
 	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := db.Init(); err != nil {
 		log.Fatal(err)
 	}
 

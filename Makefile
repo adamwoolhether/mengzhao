@@ -16,14 +16,17 @@ run: build
 up:
 	go run cmd/migrate/main.go up
 
+reset:
+	go run cmd/reset/main.go
+
 down:
 	go run cmd/migrate/main.go down
 
 drop:
-	go run cmd/drop/main.go up
+	go run cmd/migrate/main.go up
 
-migrate:
-	migrate create -ext sql -dir cmd/migrate/migrates $(filter-out $@,$(MAKECMDGOALS))
+migration:
+	migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
 
 gen:
 	go run cmd/generate/main.go
