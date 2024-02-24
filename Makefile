@@ -4,11 +4,16 @@ install:
 	npx tailwindcss init
 	npm install -D daisyui@latest
 
-
 build:
 	npx tailwindcss -i view/css/app.css -o public/styles.css
 	templ generate view
 	go build -o bin/mengzhao main.go
+
+templ:
+	templ generate -watch -proxy=http://localhost:42069
+
+tailwind:
+	npx tailwindcss -i view/css/app.css -o public/styles.css --watch
 
 run: build
 	./bin/mengzhao

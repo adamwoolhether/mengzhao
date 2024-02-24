@@ -8,8 +8,10 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/nedpals/supabase-go"
 
+	"mengzhao/db"
 	sb "mengzhao/pkg/supabase"
 	"mengzhao/pkg/validate"
+	"mengzhao/types"
 	"mengzhao/view/auth"
 )
 
@@ -53,6 +55,40 @@ func Signup(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return render(w, r, auth.SignupSuccessful(sbUser.Email))
+}
+
+func AccountSetupIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(w, r, auth.AccountSetup())
+}
+
+func AccountSetupCreate(w http.ResponseWriter, r *http.Request) error {
+	params := auth.AccountSetupParams{
+		Username: r.FormValue("username"),
+	}
+
+	validator := validate.New(&params, validate.Fields{
+		"Username": validate.Rules(validate.Min(2), validate.Max(15)),
+	})
+
+	var errors auth.AccountSetupErrors
+	if !validator.Validate(&errors) {
+		slog.Info("ERR", errors)
+		slog.Info("PARAM", params)
+
+		return render(w, r, auth.AccountSetupForm(params, errors))
+	}
+
+	user := getAuthenticatedUser(r)
+	account := types.Account{
+		UserID:   user.ID,
+		Username: params.Username,
+	}
+
+	if err := db.CreateAccount(r.Context(), &account); err != nil {
+		return err
+	}
+
+	return htmxRedirect(w, r, "/")
 }
 
 func LoginIndex(w http.ResponseWriter, r *http.Request) error {

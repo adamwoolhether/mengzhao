@@ -1,0 +1,14 @@
+package settings
+
+import (
+    "mengzhao/view/layout"
+    "mengzhao/types"
+)
+
+templ Index(user types.AuthenticatedUser) {
+    @layout.App(true) {
+        <div class="max-w-2xl w-full mx-auto mt-4">
+            account
+        </div>
+    }
+}

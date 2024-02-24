@@ -7,7 +7,7 @@ import (
 templ Navigation() {
     <div class="navbar bg-base-100 border-b border-gray-700">
         <div class="flex-1">
-            <a class="text-2xl font-black text-primary">Meng Zhao</a>
+            <a href="/" class="text-2xl font-black text-primary">Meng Zhao</a>
         </div>
         <div class="flex-none">
             <ul class="menu menu-horizontal px-1">
@@ -18,7 +18,7 @@ templ Navigation() {
                               { view.AuthenticatedUser(ctx).Email }
                             </summary>
                             <ul class="p-2 bg-base-100 rounded-t-none">
-                                <li><a>Settings</a></li>
+                                <li><a href="/settings">Settings</a></li>
                                 @LogoutForm()
                             </ul>
                         </details>

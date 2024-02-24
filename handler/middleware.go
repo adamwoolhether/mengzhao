@@ -51,16 +51,33 @@ func WithUser(next http.Handler) http.Handler {
 			LoggedIn: true,
 		}
 
+		ctx := context.WithValue(r.Context(), types.UserCtxKey, user)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	}
+
+	return http.HandlerFunc(f)
+}
+
+func WithAccountSetup(next http.Handler) http.Handler {
+	f := func(w http.ResponseWriter, r *http.Request) {
+		user := getAuthenticatedUser(r)
 		account, err := db.GetAccountByID(r.Context(), user.ID)
-		if !errors.Is(err, sql.ErrNoRows) {
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				// Redirect to /account/setup if user hasn't setup and account.
+				http.Redirect(w, r, "/account/setup", http.StatusSeeOther)
+				return
+			}
+
 			next.ServeHTTP(w, r)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		user.Account = account
 
 		ctx := context.WithValue(r.Context(), types.UserCtxKey, user)
-
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 
