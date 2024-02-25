@@ -179,6 +179,48 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 	</form>
 }
 
+type ResetPasswordErrors struct {
+    NewPassword string
+}
+
+templ ResetPassword() {
+    @layout.App(true) {
+        <div class="max-w-2xl w-full mx-auto mt-8">
+            <div>
+                <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Reset Password</h1>
+                <div class="py-6">
+                    <div class="text-label mb-2">Enter your new password</div>
+                    @ResetPasswordForm(ResetPasswordErrors{})
+                </div>
+            </div>
+        </div>
+    }
+}
+
+templ ResetPasswordForm(errors ResetPasswordErrors) {
+    <form
+        hx-put="/auth/reset-password"
+        hx-swap="outerHTML"
+    >
+    <div class="mb-4">
+        <input
+            class="input input-bordered w-full max-w-sm"
+            name="password"
+            type="password"
+        />
+
+        if len(errors.NewPassword) > 0 {
+            <div class="test-sm text-error mt-1">{ errors.NewPassword }</div>
+        }
+    </div>
+    <button class="btn btn-primary">Update password</button>
+    </form>
+}
+
+templ ResetPasswordSuccessful(email string) {
+    <div>Password reset link has been sent to <span class="text-info font-semibold">{ email }</span></div>
+}
+
 templ CallbackScript() {
     <script>
         var url = window.location.href;

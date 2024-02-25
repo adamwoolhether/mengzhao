@@ -22,20 +22,17 @@ templ Index(user types.AuthenticatedUser) {
                 <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Profile Settings</h1>
                 @ProfileForm(ProfileParams{Username: user.Account.Username}, ProfileErrors{})
             </div>
-            <div>
+            <div class="mt-10">
                 <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Change Password</h1>
                 <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
-                    <dt class="">Current Password</dt>
+                    <dt class="">Reset Password</dt>
                     <dd class="sm:col-span-2 sm:mt-0">
-                        <input class="input input-bordered w-full max-w-sm"/>
-                    </dd>
-                    <dt class="">New Password</dt>
-                    <dd class="sm:col-span-2 sm:mt-0">
-                        <input class="input input-bordered w-full max-w-sm"/>
-                    </dd>
-                    <dt></dt>
-                    <dd class="sm:col-span-2 sm:mt-0">
-                        <button class="btn btn-primary">Update Password</button>
+                        <form
+                            hx-post="/auth/reset-password"
+                            hx-swap="outerHTML"
+                        >
+                            <button class="btn btn-primary">Reset Password</button>
+                        </form>
                     </dd>
                 </div>
             </div>

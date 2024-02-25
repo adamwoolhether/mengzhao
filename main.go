@@ -52,6 +52,9 @@ func main() {
 		r.Use(handler.WithAccountSetup)
 		r.Get("/settings", handler.Make(handler.SettingsIndex))
 		r.Put("/settings/account/profile", handler.Make(handler.SettingsUpdate))
+		r.Get("/auth/reset-password", handler.Make(handler.ResetPasswordIndex))
+		r.Post("/auth/reset-password", handler.Make(handler.ResetPasswordRequest))
+		r.Put("/auth/reset-password", handler.Make(handler.ResetPasswordUpdate))
 	})
 
 	router.Get("/refresh", refresh)

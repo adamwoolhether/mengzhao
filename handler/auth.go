@@ -163,6 +163,24 @@ func Logout(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+func ResetPasswordIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(w, r, auth.ResetPassword())
+}
+
+func ResetPasswordRequest(w http.ResponseWriter, r *http.Request) error {
+	user := getAuthenticatedUser(r)
+
+	if err := sb.Client.Auth.ResetPasswordForEmail(r.Context(), user.Email); err != nil {
+		return err
+	}
+
+	return render(w, r, auth.ResetPasswordSuccessful(user.Email))
+}
+
+func ResetPasswordUpdate(w http.ResponseWriter, r *http.Request) error {
+	return htmxRedirect(w, r, "/")
+}
+
 func setAuthCookie(w http.ResponseWriter, r *http.Request, accessToken string) error {
 	store := sessions.NewCookieStore([]byte(os.Getenv(sessionEnvVar)))
 	session, err := store.Get(r, sessionUserKey)
