@@ -1,13 +1,10 @@
 package main
 
 import (
-	"embed"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
-	"sync"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -16,9 +13,6 @@ import (
 	"mengzhao/handler"
 	"mengzhao/pkg/supabase"
 )
-
-//go:embed public
-var FS embed.FS
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -36,7 +30,7 @@ func main() {
 	router := chi.NewMux()
 	router.Use(handler.WithUser)
 
-	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
+	router.Handle("/*", public())
 	router.Get("/", handler.Make(handler.HandleHomeIndex))
 	router.Get("/login", handler.Make(handler.LoginIndex))
 	router.Post("/login", handler.Make(handler.Login))
@@ -65,33 +59,10 @@ func main() {
 		r.Get("/generate/image/status/{id}", handler.Make(handler.GenerateImageStatus))
 	})
 
-	router.Get("/refresh", refresh)
-
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 
 	slog.Info("app running", "port", port)
 	if err := http.ListenAndServe("localhost"+port, router); err != nil {
 		log.Fatal(err)
 	}
-}
-
-var once sync.Once
-
-func refresh(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	flusher, ok := w.(http.Flusher)
-	if !ok {
-		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
-		return
-	}
-
-	flusher.Flush()
-
-	once.Do(func() {
-		fmt.Fprint(w, "data: refresh\n\n")
-		flusher.Flush()
-	})
-
-	// block forever to keep event listener from constantly reconnecting
-	<-make(chan struct{})
 }

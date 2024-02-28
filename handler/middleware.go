@@ -32,6 +32,10 @@ func WithUser(next http.Handler) http.Handler {
 			return
 		}
 		accessToken := session.Values[sessionAccessTokenKey] // UNSAFE
+		if accessToken == nil {
+			next.ServeHTTP(w, r)
+			return
+		}
 
 		resp, err := sb.Client.Auth.User(r.Context(), accessToken.(string))
 		if err != nil {

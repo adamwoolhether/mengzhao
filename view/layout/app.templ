@@ -6,18 +6,6 @@ templ App (nav bool) {
    <!DOCTYPE html>
     <html lang="en" data-theme="dark">
     <head>
-        <script>
-            var evtSource = new EventSource("/refresh");
-            evtSource.onopen = function(event) {
-                console.log("Connected to /refresh");
-            };
-            evtSource.onmessage = function(event) {
-                console.log("Received message: " + event.data);
-                if (event.data === "refresh") {
-                    window.location.reload();
-                }
-            };
-        </script>
         <title>Meng Zhao</title>
         //<link rel="icon" type="iamge/x-icon" href="public/favicon.ico"/>
         <meta charset="UTF-8"/>

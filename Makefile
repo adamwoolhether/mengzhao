@@ -5,13 +5,14 @@ install:
 	npx tailwindcss init
 	npm install -D daisyui@latest
 
+run:
+	./run.sh
+	@#wgo -file=.go -file=.templ -file=.js -file=.css -xfile=_templ.go templ generate :: npx tailwindcss -i view/css/app.css -o public/styles.css :: go run main.go
+
 build:
 	npx tailwindcss -i view/css/app.css -o public/styles.css
 	templ generate view
 	go build -o bin/mengzhao main.go
-
-run:
-	wgo -file=.go -file=.templ -file=.js -file=.css -xfile=_templ.go templ generate :: npx tailwindcss -i view/css/app.css -o public/styles.css :: go run main.go
 
 up:
 	go run cmd/migrate/main.go up
