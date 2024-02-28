@@ -17,6 +17,7 @@ const (
 type Image struct {
 	ID        int `bun:"id,pk,autoincrement"`
 	UserID    uuid.UUID
+	BatchID   uuid.UUID
 	Status    ImageStatus
 	ImgLoc    string // Cloudflare image location
 	Prompt    string

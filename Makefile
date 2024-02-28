@@ -11,7 +11,7 @@ build:
 	go build -o bin/mengzhao main.go
 
 run:
-	wgo -file=.go -file=.templ -xfile=_templ.go templ generate :: npx tailwindcss -i view/css/app.css -o public/styles.css :: go run main.go
+	wgo -file=.go -file=.templ -file=.js -file=.css -xfile=_templ.go templ generate :: npx tailwindcss -i view/css/app.css -o public/styles.css :: go run main.go
 
 up:
 	go run cmd/migrate/main.go up

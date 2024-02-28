@@ -4,7 +4,7 @@ module.exports = {
   safelist: [],
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["synthwave"]
+    themes: ["aqua"]
   }
 }
 
