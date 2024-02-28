@@ -2,18 +2,29 @@
 
 npx tailwindcss -i view/css/app.css -o public/styles.css --watch &
 PID1=$!
+echo "tailwindcss started with PID: $PID1"
 
-wgo -file=.go -file=.templ -file=.js -file=.css -xfile=_templ.go go run -tags dev . &
+(nohup wgo -file=.go -file=.templ -file=.js -file=.css -xfile=_templ.go go run -tags dev .) &
 PID2=$!
+echo "go run started with PID: $PID2"
 
 templ generate --watch --proxy=http://localhost:42069 &
 PID3=$!
+echo "templ generate started with PID: $PID3"
+
+
 
 cleanup() {
-  echo "Stopping all resources..."
-  kill $PID1 $PID2 $PID3
+  for pid in $PID3 $PID2 $PID1; do
+    if kill -0 $pid 2>/dev/null; then
+      echo "Stopping $pid..."
+      kill $pid || echo "Failed to stop process $pid"
+    else
+      echo "Process $pid already stopped."
+    fi
+  done
 }
 
 trap cleanup SIGINT
 
-wait $PID1 $PID2 $PID3
+wait $PID3 $PID2 $PID1
