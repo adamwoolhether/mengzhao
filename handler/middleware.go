@@ -46,9 +46,10 @@ func WithUser(next http.Handler) http.Handler {
 		}
 
 		user := types.AuthenticatedUser{
-			ID:       id,
-			Email:    resp.Email,
-			LoggedIn: true,
+			ID:          id,
+			Email:       resp.Email,
+			LoggedIn:    true,
+			AccessToken: accessToken.(string),
 		}
 
 		ctx := context.WithValue(r.Context(), types.UserCtxKey, user)
