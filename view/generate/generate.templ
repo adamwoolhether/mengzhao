@@ -34,7 +34,7 @@ templ Form() {
     // append the image after the child with beforeend.
     <form
         hx-post="/generate"
-        hx-swap="beforeend"
+        hx-swap="afterbegin"
         hx-target="#gallery"
     >
         <div>
@@ -45,9 +45,11 @@ templ Form() {
 
 templ GalleryImage(image types.Image) {
     if image.Status == types.ImageStatusCompleted {
-        <div class="bg-green-100 aspect-[3/4] rounded-xl"></div>
+        <div class="bg-green-100 aspect-[2/3] rounded-xl cursor-pointer">
+            <img class="object-cover rounded-xl mouse-pointer" src={ image.ImgLoc }/>
+        </div>
     } else if image.Status == types.ImageStatusFailed {
-        <div class="bg-red-100 aspect-[3/4] rounded-xl flex justify-center items-center">
+        <div class="bg-red-100 aspect-[2/3] rounded-xl flex justify-center items-center">
             <div>
                 <i class="fa-solid fa-bug text-5xl font-black text-slate-600"></i>
             </div>
@@ -56,7 +58,7 @@ templ GalleryImage(image types.Image) {
         <div
             hx-get={ fmt.Sprintf("/generate/image/status/%d", image.ID) }
             hx-trigger="load delay:3s"
-            class="bg-red-100 aspect-[3/4] rounded-xl flex justify-center items-center">
+            class="bg-red-100 aspect-[2/3] rounded-xl flex justify-center items-center">
             <div>
                 <span class="loading loading-spinner loading-lg text-gray-600"></span>
             </div>

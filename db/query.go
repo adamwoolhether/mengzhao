@@ -8,6 +8,41 @@ import (
 	"mengzhao/types"
 )
 
+func GetImagesByUserID(ctx context.Context, userID uuid.UUID) ([]types.Image, error) {
+	var images []types.Image
+
+	err := Bun.NewSelect().
+		Model(&images).
+		Where("deleted = ?", false).
+		Where("user_id =?", userID).
+		Order("created_at DESC").
+		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return images, nil
+}
+
+func GetImageByID(ctx context.Context, imageID int) (types.Image, error) {
+	var image types.Image
+
+	err := Bun.NewSelect().Model(&image).Where("id =?", imageID).Scan(ctx)
+	if err != nil {
+		return image, err
+	}
+
+	return image, nil
+}
+func CreateImage(ctx context.Context, image *types.Image) error {
+	_, err := Bun.NewInsert().Model(image).Exec(ctx)
+	if err != nil {
+		return nil
+	}
+
+	return nil
+}
+
 func GetAccountByID(ctx context.Context, id uuid.UUID) (types.Account, error) {
 	var account types.Account
 

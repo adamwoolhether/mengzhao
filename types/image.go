@@ -18,5 +18,9 @@ type Image struct {
 	ID        int `bun:"id,pk,autoincrement"`
 	UserID    uuid.UUID
 	Status    ImageStatus
+	ImgLoc    string // Cloudflare image location
+	Prompt    string
+	Deleted   bool      `bun:"default:'false'"`
 	CreatedAt time.Time `bun:"default:'now()'"`
+	DeletedAt time.Time
 }

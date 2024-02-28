@@ -3,33 +3,59 @@ package handler
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 
+	"mengzhao/db"
 	"mengzhao/types"
 	"mengzhao/view/generate"
 )
 
 func GenerateIndex(w http.ResponseWriter, r *http.Request) error {
+	user := getAuthenticatedUser(r)
+
+	images, err := db.GetImagesByUserID(r.Context(), user.UserID)
+	if err != nil {
+		return err
+	}
+
 	data := generate.ViewData{
-		Images: []types.Image{},
+		Images: images,
 	}
 
 	return render(w, r, generate.Index(data))
 }
 
 func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
-	return render(w, r, generate.GalleryImage(types.Image{Status: types.ImageStatusPending}))
+	user := getAuthenticatedUser(r)
+
+	prompt := "blue bikini-clad girl in a fountain"
+	image := types.Image{
+		Prompt: prompt,
+		UserID: user.UserID,
+		Status: types.ImageStatusPending,
+	}
+
+	if err := db.CreateImage(r.Context(), &image); err != nil {
+		return err
+	}
+
+	return render(w, r, generate.GalleryImage(image))
 }
 
 func GenerateImageStatus(w http.ResponseWriter, r *http.Request) error {
-	id := chi.URLParam(r, "id")
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return err
+	}
+
 	slog.Info("checking image status", "id", id)
 
-	// fetch from db
-
-	image := types.Image{
-		Status: types.ImageStatusPending,
+	image, err := db.GetImageByID(r.Context(), id)
+	if err != nil {
+		return err
 	}
 
 	return render(w, r, generate.GalleryImage(image))
