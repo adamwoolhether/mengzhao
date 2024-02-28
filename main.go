@@ -59,8 +59,10 @@ func main() {
 		r.Get("/auth/reset-password", handler.Make(handler.ResetPasswordIndex))
 		r.Post("/auth/reset-password", handler.Make(handler.ResetPasswordRequest))
 		r.Put("/auth/reset-password", handler.Make(handler.ResetPasswordUpdate))
-
 		r.Get("/generate", handler.Make(handler.GenerateIndex))
+		r.Post("/generate", handler.Make(handler.GenerateCreate))
+
+		r.Get("/generate/image/status/{id}", handler.Make(handler.GenerateImageStatus))
 	})
 
 	router.Get("/refresh", refresh)
