@@ -45,16 +45,22 @@ func main() {
 	router.Get("/signup", handler.Make(handler.SignupIndex))
 	router.Post("/signup", handler.Make(handler.Signup))
 	router.Get("/auth/callback", handler.Make(handler.AuthCallback))
-	router.Get("/account/setup", handler.Make(handler.AccountSetupIndex))
-	router.Post("/account/setup", handler.Make(handler.AccountSetupCreate))
 
 	router.Group(func(r chi.Router) {
-		r.Use(handler.WithAccountSetup)
+		r.Use(handler.WithAuth)
+		r.Get("/account/setup", handler.Make(handler.AccountSetupIndex))
+		r.Post("/account/setup", handler.Make(handler.AccountSetupCreate))
+	})
+
+	router.Group(func(r chi.Router) {
+		r.Use(handler.WithAuth, handler.WithAccountSetup)
 		r.Get("/settings", handler.Make(handler.SettingsIndex))
 		r.Put("/settings/account/profile", handler.Make(handler.SettingsUpdate))
 		r.Get("/auth/reset-password", handler.Make(handler.ResetPasswordIndex))
 		r.Post("/auth/reset-password", handler.Make(handler.ResetPasswordRequest))
 		r.Put("/auth/reset-password", handler.Make(handler.ResetPasswordUpdate))
+
+		r.Get("/generate", handler.Make(handler.GenerateIndex))
 	})
 
 	router.Get("/refresh", refresh)

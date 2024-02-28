@@ -1701,6 +1701,10 @@ html {
   margin-bottom: 1rem;
 }
 
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
 .mb-8 {
   margin-bottom: 2rem;
 }
@@ -1729,6 +1733,18 @@ html {
   display: flex;
 }
 
+.h-\[calc\(100vh-69px\)\] {
+  height: calc(100vh - 69px);
+}
+
+.w-1\/4 {
+  width: 25%;
+}
+
+.w-3\/4 {
+  width: 75%;
+}
+
 .w-full {
   width: 100%;
 }
@@ -1739,6 +1755,10 @@ html {
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-screen-xl {
+  max-width: 1280px;
 }
 
 .max-w-sm {
@@ -1786,6 +1806,10 @@ html {
 
 .border-b {
   border-bottom-width: 1px;
+}
+
+.border-r {
+  border-right-width: 1px;
 }
 
 .border-gray-700 {
@@ -1873,6 +1897,10 @@ html {
   font-weight: 600;
 }
 
+.leading-\[1\.2\] {
+  line-height: 1.2;
+}
+
 .text-error {
   --tw-text-opacity: 1;
   color: var(--fallback-er,oklch(var(--er)/var(--tw-text-opacity)));
@@ -1888,11 +1916,6 @@ html {
   color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
 }
 
-.text-secondary {
-  --tw-text-opacity: 1;
-  color: var(--fallback-s,oklch(var(--s)/var(--tw-text-opacity)));
-}
-
 .text-success {
   --tw-text-opacity: 1;
   color: var(--fallback-su,oklch(var(--su)/var(--tw-text-opacity)));
@@ -1901,6 +1924,11 @@ html {
 .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.border-app {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity));
 }
 
 @media (min-width: 640px) {
