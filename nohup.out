@@ -158,3 +158,23 @@ building static files for dev env
 2024/02/29 01:30:33 INFO app running port=:42069
 2024/02/29 01:30:33 listen tcp 127.0.0.1:42069: bind: address already in use
 exit status 1
+building static files for dev env
+2024/02/29 01:34:54 INFO app running port=:42069
+2024/02/29 01:34:54 listen tcp 127.0.0.1:42069: bind: address already in use
+exit status 1
+building static files for dev env
+2024/02/29 01:35:23 INFO app running port=:42069
+2024/02/29 01:35:23 listen tcp 127.0.0.1:42069: bind: address already in use
+exit status 1
+building static files for dev env
+2024/02/29 01:35:39 INFO app running port=:42069
+2024/02/29 01:35:39 listen tcp 127.0.0.1:42069: bind: address already in use
+exit status 1
+building static files for dev env
+2024/02/29 01:36:47 INFO app running port=:42069
+2024/02/29 01:36:47 listen tcp 127.0.0.1:42069: bind: address already in use
+exit status 1
+building static files for dev env
+2024/02/29 01:37:47 INFO app running port=:42069
+2024/02/29 01:37:47 listen tcp 127.0.0.1:42069: bind: address already in use
+exit status 1

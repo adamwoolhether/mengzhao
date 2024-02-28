@@ -28,3 +28,5 @@ cleanup() {
 trap cleanup SIGINT
 
 wait $PID3 $PID2 $PID1
+
+osascript -e 'tell application "Google Chrome" to close (tabs of window 1 whose URL contains "http://127.0.0.1:7331")'
