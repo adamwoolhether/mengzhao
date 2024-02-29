@@ -12,10 +12,12 @@ templ generate --watch --proxy=http://localhost:42069 &
 PID3=$!
 echo "templ generate started with PID: $PID3"
 
-
+tail -f nohup.out &
+PID4=$!
+echo "tail started with PID: $PID4"
 
 cleanup() {
-  for pid in $PID3 $PID2 $PID1; do
+  for pid in $PID4 $PID3 $PID2 $PID1; do
     if kill -0 $pid 2>/dev/null; then
       echo "Stopping $pid..."
       kill $pid || echo "Failed to stop process $pid"
@@ -27,6 +29,7 @@ cleanup() {
 
 trap cleanup SIGINT
 
-wait $PID3 $PID2 $PID1
+wait $PID4 $PID3 $PID2 $PID1
 
+rm nohup.out
 osascript -e 'tell application "Google Chrome" to close (tabs of window 1 whose URL contains "http://127.0.0.1:7331")'
