@@ -3,12 +3,15 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/replicate/replicate-go"
 	"github.com/uptrace/bun"
 
 	"mengzhao/db"
@@ -57,9 +60,19 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 		return render(w, r, generate.Form(params, errors))
 	}
 
-	txFunc := func(ctx context.Context, tx bun.Tx) error {
-		batchID := uuid.New()
+	batchID := uuid.New()
 
+	genParams := GenerateImgParams{
+		Prompt:  params.Prompt,
+		Amount:  params.Amount,
+		BatchID: batchID,
+		UserID:  user.UserID,
+	}
+	if err := generateImages(r.Context(), genParams); err != nil {
+		return err
+	}
+
+	txFunc := func(ctx context.Context, tx bun.Tx) error {
 		for i := 0; i < params.Amount; i++ {
 			image := types.Image{
 				Prompt:  params.Prompt,
@@ -99,4 +112,44 @@ func GenerateImageStatus(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return render(w, r, generate.GalleryImage(image))
+}
+
+type GenerateImgParams struct {
+	Prompt  string
+	Amount  int
+	BatchID uuid.UUID
+	UserID  uuid.UUID
+}
+
+func generateImages(ctx context.Context, params GenerateImgParams) error {
+	r8, err := replicate.NewClient(replicate.WithTokenFromEnv())
+	if err != nil {
+		return fmt.Errorf("replicate client: %w", err)
+	}
+
+	input := replicate.PredictionInput{
+		"prompt":      params.Prompt,
+		"num_outputs": params.Amount,
+	}
+
+	webhookURL := os.Getenv("WEBHOOK_URL")
+	webhook := replicate.Webhook{
+		URL:    fmt.Sprintf("%s/%s/%s", webhookURL, params.UserID, params.BatchID),
+		Events: []replicate.WebhookEventType{"start", "completed"},
+	}
+
+	version := "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"
+	_, err = r8.CreatePrediction(ctx, version, input, &webhook, false)
+	if err != nil {
+		return fmt.Errorf("prediction: %w", err)
+	}
+
+	//
+	// Wait for the prediction to finish
+	//err = r8.Wait(ctx, prediction)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	return nil
 }

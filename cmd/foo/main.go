@@ -24,9 +24,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// https://replicate.com/stability-ai/stable-diffusion
-	version := "stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"
-
+	//https://replicate.com/stability-ai/stable-diffusion
+	//version := "stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"
+	//
 	input := replicate.PredictionInput{
 		"prompt": "an astronaut riding a horse on mars, hd, dramatic lighting",
 	}
@@ -37,14 +37,14 @@ func main() {
 	}
 
 	// Run a model and wait for its output
-	output, err := r8.Run(ctx, version, input, &webhook)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("output: ", output)
+	//output, err := r8.Run(ctx, version, input, &webhook)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//fmt.Println("output: ", output)
 
 	//// Create a prediction
-	version = "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"
+	version := "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"
 	prediction, err := r8.CreatePrediction(ctx, version, input, &webhook, false)
 	if err != nil {
 		log.Fatal(err)
