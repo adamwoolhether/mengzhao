@@ -75,7 +75,6 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 	txFunc := func(ctx context.Context, tx bun.Tx) error {
 		for i := 0; i < params.Amount; i++ {
 			image := types.Image{
-				Prompt:  params.Prompt,
 				UserID:  user.UserID,
 				BatchID: batchID,
 				Status:  types.ImageStatusPending,

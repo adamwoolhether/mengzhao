@@ -1,0 +1,34 @@
+### Send POST request with json body
+POST http://localhost:42069/replicate/callback/332e0552-a8e3-488b-a637-4446cb1f99cd/e260e9ea-f57c-4481-a36e-951a10149e38
+Content-Type: application/json
+
+{
+  "completed_at": "2024-03-01T14:14:38.107207Z",
+  "created_at": "2024-03-01T14:14:35.199237Z",
+  "error": null,
+  "id": "gt7g5qzb74dpscgnsjfeh5bkum",
+  "input": {
+    "num_outputs": 1,
+    "prompt": "chair in the park"
+  },
+  "logs": "Using seed: 33617\n  0%|          | 0/50 [00:00<?, ?it/s]\n  4%|▍         | 2/50 [00:00<00:02, 18.33it/s]\n  8%|▊         | 4/50 [00:00<00:02, 18.34it/s]\n 14%|█▍        | 7/50 [00:00<00:02, 19.93it/s]\n 20%|██        | 10/50 [00:00<00:01, 21.20it/s]\n 26%|██▌       | 13/50 [00:00<00:01, 21.85it/s]\n 32%|███▏      | 16/50 [00:00<00:01, 22.27it/s]\n 38%|███▊      | 19/50 [00:00<00:01, 22.15it/s]\n 44%|████▍     | 22/50 [00:01<00:01, 22.43it/s]\n 50%|█████     | 25/50 [00:01<00:01, 22.59it/s]\n 56%|█████▌    | 28/50 [00:01<00:00, 22.73it/s]\n 62%|██████▏   | 31/50 [00:01<00:00, 22.83it/s]\n 68%|██████▊   | 34/50 [00:01<00:00, 22.88it/s]\n 74%|███████▍  | 37/50 [00:01<00:00, 22.91it/s]\n 80%|████████  | 40/50 [00:01<00:00, 22.94it/s]\n 86%|████████▌ | 43/50 [00:01<00:00, 22.87it/s]\n 92%|█████████▏| 46/50 [00:02<00:00, 22.89it/s]\n 98%|█████████▊| 49/50 [00:02<00:00, 22.91it/s]\n100%|██████████| 50/50 [00:02<00:00, 22.36it/s]\n",
+  "metrics": {
+    "predict_time": 2.894878
+  },
+  "model": "stability-ai/stable-diffusion",
+  "output": [
+    "https://replicate.delivery/pbxt/Zedp6ctrwxUVAafMT8itQQsYggAcJo2mQGUS0U9Nme4amy3kA/out-0.png"
+  ],
+  "started_at": "2024-03-01T14:14:35.212329Z",
+  "status": "succeeded",
+  "urls": {
+    "cancel": "https://api.replicate.com/v1/predictions/gt7g5qzb74dpscgnsjfeh5bkum/cancel",
+    "get": "https://api.replicate.com/v1/predictions/gt7g5qzb74dpscgnsjfeh5bkum"
+  },
+  "version": "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
+  "webhook": "https://webhook.site/64d457b3-e7c5-4bcc-b13f-877874021079/332e0552-a8e3-488b-a637-4446cb1f99cd/e260e9ea-f57c-4481-a36e-951a10149e38",
+  "webhook_events_filter": [
+    "start",
+    "completed"
+  ]
+}

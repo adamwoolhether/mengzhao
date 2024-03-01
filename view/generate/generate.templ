@@ -89,8 +89,10 @@ templ Form(params FormParams, errors FormErrors) {
 
 templ GalleryImage(image types.Image) {
     if image.Status == types.ImageStatusCompleted {
-        <div class="bg-green-100 aspect-[2/3] rounded-xl cursor-pointer">
-            <img class="object-cover rounded-xl mouse-pointer" src={ image.ImgLoc }/>
+        <div class="aspect-square rounded-xl cursor-pointer">
+            <a href={ templ.URL(image.ImgLoc) } target="_blank">
+                <img class="object-cover rounded-xl mouse-pointer" src={ image.ImgLoc }/>
+            </a>
         </div>
     } else if image.Status == types.ImageStatusFailed {
         <div class="bg-red-100 aspect-[2/3] rounded-xl flex justify-center items-center">

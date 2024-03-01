@@ -58,6 +58,15 @@ func CreateImage(ctx context.Context, image *types.Image) error {
 	return nil
 }
 
+func UpdateImage(ctx context.Context, image *types.Image) error {
+	_, err := Bun.NewUpdate().Model(image).WherePK().Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GetAccountByID(ctx context.Context, id uuid.UUID) (types.Account, error) {
 	var account types.Account
 
