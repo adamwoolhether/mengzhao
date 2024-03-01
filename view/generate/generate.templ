@@ -3,6 +3,7 @@ package generate
 import (
     "mengzhao/view/layout"
     "mengzhao/view"
+    "mengzhao/view/ui"
     "mengzhao/types"
     "fmt"
 )
@@ -41,6 +42,9 @@ type FormParams struct {
 type FormErrors struct {
     Prompt string
     Amount string
+    CreditsNeeded int
+    UserCredits int
+    Credits bool
 }
 
 templ Form(params FormParams, errors FormErrors) {
@@ -85,6 +89,9 @@ templ Form(params FormParams, errors FormErrors) {
             <button class="btn btn-primary w-full mt-4">generate</button>
         </div>
     </form>
+    if errors.Credits {
+        @ui.CreditsModal(errors.CreditsNeeded, errors.UserCredits)
+    }
 }
 
 templ GalleryImage(image types.Image) {

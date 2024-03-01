@@ -20,6 +20,8 @@ import (
 	"mengzhao/view/generate"
 )
 
+const creditsPerImage = 1
+
 func GenerateIndex(w http.ResponseWriter, r *http.Request) error {
 	user := getAuthenticatedUser(r)
 
@@ -57,6 +59,14 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 
 	if amount <= 0 || amount > 8 {
 		errors.Amount = "Please enter a valid amount"
+		return render(w, r, generate.Form(params, errors))
+	}
+
+	creditsNeeded := params.Amount * creditsPerImage
+	if user.Account.Credits < creditsNeeded {
+		errors.CreditsNeeded = creditsNeeded
+		errors.UserCredits = user.Account.Credits
+		errors.Credits = true
 		return render(w, r, generate.Form(params, errors))
 	}
 
