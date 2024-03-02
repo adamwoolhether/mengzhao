@@ -4,6 +4,7 @@ install:
 	npm install -D tailwindcss
 	npx tailwindcss init
 	npm install -D daisyui@latest
+	brew install ngrok
 
 run:
 	./run.sh
