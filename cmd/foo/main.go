@@ -1,6 +1,6 @@
 package main
 
-import (
+/*import (
 	"context"
 	"fmt"
 	"log"
@@ -57,3 +57,4 @@ func main() {
 	}
 	fmt.Println("output: ", prediction)
 }
+*/

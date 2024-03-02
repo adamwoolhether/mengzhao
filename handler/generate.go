@@ -88,6 +88,7 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 				UserID:  user.UserID,
 				BatchID: batchID,
 				Status:  types.ImageStatusPending,
+				Prompt:  params.Prompt,
 			}
 
 			if err := db.CreateImage(r.Context(), &image); err != nil {

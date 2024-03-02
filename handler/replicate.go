@@ -5,11 +5,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
+	"golang.org/x/sync/errgroup"
 
 	"mengzhao/db"
 	"mengzhao/types"
@@ -58,16 +62,35 @@ func ReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// CLOUDFLARE UPDLOAD AND GET URL HERE.
+	cf, err := cloudflare.New(os.Getenv("CLOUDFLARE_API_TOKEN"), os.Getenv("CLOUDFLARE_EMAIL"))
+	if err != nil {
+		return fmt.Errorf("replicate callback cloudflare client: %w", err)
+	}
 
 	txFunc := func(ctx context.Context, tx bun.Tx) error {
-		for i, imageURL := range resp.Output {
-			images[i].Status = types.ImageStatusCompleted
-			images[i].ImgLoc = imageURL
-			images[i].Prompt = resp.Input.Prompt
+		var eg errgroup.Group
 
-			if err := db.UpdateImage(r.Context(), &images[i]); err != nil {
-				return err
+		eg.Go(func() error {
+			for i, imageURL := range resp.Output {
+				newURL, err := uploadToCloudFlare(r.Context(), cf, imageURL, images[i])
+				if err != nil {
+					slog.Error("upload to cloudflare", "imageURL", imageURL, "batchID", batchID, "err", err)
+					images[i].Status = types.ImageStatusFailed
+				} else {
+					images[i].Status = types.ImageStatusCompleted
+					images[i].ImgLoc = newURL
+				}
+
+				if err := db.UpdateImage(r.Context(), &images[i]); err != nil {
+					return err
+				}
 			}
+
+			return nil
+		})
+
+		if err := eg.Wait(); err != nil {
+			return fmt.Errorf("batch update images: %w", err)
 		}
 
 		return nil
@@ -78,4 +101,31 @@ func ReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return nil
+}
+
+func uploadToCloudFlare(ctx context.Context, client *cloudflare.API, replicateURL string, image types.Image) (string, error) {
+	imgParams := cloudflare.UploadImageParams{
+		//File:              nil,
+		URL:  replicateURL,
+		Name: "",
+		//RequireSignedURLs: false,
+		Metadata: map[string]interface{}{
+			"userID":  image.UserID,
+			"batchID": image.BatchID,
+			"srcURL":  image.ImgLoc,
+		},
+	}
+
+	rc := cloudflare.ResourceContainer{
+		Level:      cloudflare.AccountRouteLevel,
+		Identifier: os.Getenv("CLOUDFLARE_ACCOUNT_ID"),
+		Type:       cloudflare.AccountType,
+	}
+
+	img, err := client.UploadImage(ctx, &rc, imgParams)
+	if err != nil {
+		return "", fmt.Errorf("uploading image[%d] batch[%s] from srcURL[%s]: %w", image.ID, image.BatchID, image.ImgLoc, err)
+	}
+
+	return img.Variants[0], nil
 }
