@@ -13,7 +13,7 @@ run:
 build:
 	npx tailwindcss -i view/css/app.css -o public/styles.css
 	templ generate view
-	go build -o bin/mengzhao main.go
+	go build  -tags dev -o bin/mengzhao .
 
 up:
 	go run cmd/migrate/main.go up
