@@ -43,7 +43,6 @@ fi
 printf "ngrok URL:\t%s\n" "$PUBLIC_URL"
 
 export WEBHOOK_URL=$PUBLIC_URL/replicate/callback
-sed -i '' -e "s|WEBHOOK_URL=.*|WEBHOOK_URL=${MY_ENV}|" .env
 
 npx tailwindcss -i view/css/app.css -o public/styles.css --watch &
 PID1=$!
