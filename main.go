@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -26,6 +27,9 @@ func main() {
 	if err := supabase.Connect(); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("*****")
+	fmt.Println(os.Getenv("WEBHOOK_URL"))
 
 	router := chi.NewMux()
 	router.Use(handler.WithUser)
