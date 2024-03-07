@@ -70,6 +70,11 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 		return render(w, r, generate.Form(params, errors))
 	}
 
+	user.Account.Credits -= creditsNeeded
+	if err := db.UpdateAccount(r.Context(), &user.Account); err != nil {
+		return err
+	}
+
 	batchID := uuid.New()
 
 	genParams := GenerateImgParams{
@@ -145,7 +150,8 @@ func generateImages(ctx context.Context, params GenerateImgParams) error {
 	webhookURL := os.Getenv("WEBHOOK_URL")
 	webhook := replicate.Webhook{
 		URL:    fmt.Sprintf("%s/%s/%s", webhookURL, params.UserID, params.BatchID),
-		Events: []replicate.WebhookEventType{"start", "completed"},
+		Events: []replicate.WebhookEventType{"completed"},
+		//Events: []replicate.WebhookEventType{"start", "completed"},
 	}
 
 	version := "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4"

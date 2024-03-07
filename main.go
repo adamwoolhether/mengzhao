@@ -58,7 +58,9 @@ func main() {
 		r.Get("/generate", handler.Make(handler.GenerateIndex))
 		r.Post("/generate", handler.Make(handler.GenerateCreate))
 		r.Get("/buy-credits", handler.Make(handler.CreditsIndex))
-		r.Get("/checkout/{productID}", handler.Make(handler.StripeCheckout))
+		r.Get("/checkout/create/{productID}", handler.Make(handler.StripeCheckout))
+		r.Get("/checkout/success/{sessionID}", handler.Make(handler.StripeCheckoutSuccess))
+		r.Get("/checkout/cancel", handler.Make(handler.StripeCheckoutCancel))
 
 		r.Get("/generate/image/status/{id}", handler.Make(handler.GenerateImageStatus))
 	})

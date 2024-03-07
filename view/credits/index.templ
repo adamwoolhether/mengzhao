@@ -1,46 +1,43 @@
 package credits
 
-import "mengzhao/view/layout"
-import "fmt"
+import (
+    "mengzhao/view/layout"
+    "fmt"
+    "os"
+)
 
 type Pricing struct {
     Credits string
     Price string
-    ProductID string
-}
-
-var prices = []Pricing{
-    {
-        Credits: "100 credits",
-        Price: "$9.99",
-        ProductID: "a",
-    },
-    {
-        Credits: "250 credits",
-        Price: "$19.99",
-        ProductID: "b",
-    },
-    {
-        Credits: "600 credits",
-        Price: "$29.99",
-        ProductID: "c",
-    },
+    PriceID string
 }
 
 templ Index() {
     @layout.App(true) {
         <div class="w-full max-w-4xl bg-base-300 rounded-xl mt-12 px-8 py-24 mx-auto">
             <div class="flex justify-evenly">
-                for _, price := range prices {
-                    @PriceCard(price)
-                }
+                @PriceCard(Pricing{
+                        Credits: "100 Credits",
+                        Price: "9.99",
+                        PriceID: os.Getenv("100_CREDITS"),
+                    })
+                @PriceCard(Pricing{
+                        Credits: "250 Credits",
+                        Price: "19.99",
+                        PriceID: os.Getenv("250_CREDITS"),
+                    })
+                @PriceCard(Pricing{
+                        Credits: "600 Credits",
+                        Price: "29.99",
+                        PriceID: os.Getenv("600_CREDITS"),
+                    })
             </div>
         </div>
     }
 }
 
 templ PriceCard(pricing Pricing) {
-    <div hx-get={ fmt.Sprintf("/checkout/%s", pricing.ProductID) } class="border border-gray-700 hover:border-secondary px-6 py-4 rounded-lg text-center cursor-pointer">
+    <div hx-get={ fmt.Sprintf("/checkout/create/%s", pricing.PriceID) } class="border border-gray-700 hover:border-secondary px-6 py-4 rounded-lg text-center cursor-pointer">
         <div class="mb-8 text-2xl font-black text-secondary">{ pricing.Credits }</div>
         <div class="text-xl">{ pricing.Price }</div>
     </div>
