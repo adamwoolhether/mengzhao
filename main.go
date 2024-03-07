@@ -57,6 +57,8 @@ func main() {
 		r.Put("/auth/reset-password", handler.Make(handler.ResetPasswordUpdate))
 		r.Get("/generate", handler.Make(handler.GenerateIndex))
 		r.Post("/generate", handler.Make(handler.GenerateCreate))
+		r.Get("/buy-credits", handler.Make(handler.CreditsIndex))
+		r.Get("/checkout/{productID}", handler.Make(handler.StripeCheckout))
 
 		r.Get("/generate/image/status/{id}", handler.Make(handler.GenerateImageStatus))
 	})
