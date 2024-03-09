@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"mengzhao/view/home"
 )
@@ -17,4 +18,10 @@ func HandleHomeIndex(w http.ResponseWriter, r *http.Request) error {
 	fmt.Printf("%+v\n", user.Account)
 
 	return home.Index().Render(r.Context(), w)
+}
+
+func HandleLongProcess(w http.ResponseWriter, r *http.Request) error {
+	time.Sleep(time.Second * 5)
+
+	return home.UserLikes(1000).Render(r.Context(), w)
 }

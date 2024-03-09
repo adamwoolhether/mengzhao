@@ -57,8 +57,6 @@ templ Signup() {
 	}
 }
 
-
-
 type SignupParams struct {
    Email string
    Password string
@@ -138,8 +136,6 @@ type LoginErrors struct {
 	InvalidCreds string
 }
 
-
-
 // innerHTML replaces existing content INSIDE the form, but not the form itself.
 // outerHTML replaces the entire form.
 templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
@@ -159,66 +155,14 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 				</div>
 			}
 		</div>
-		<div class="w-full">
-			<div class="label">
-				<span class="label-text-alt">Password</span>
-			</div>
-			<input type="password" name="password" required autocomplete="off" placeholder="Type here" class="input input-bordered w-full"/>
-			if len(errors.Password) > 0 {
-				<div class="label">
-					<span class="label-text-alt text-error">{ errors.Password }</span>
-				</div>
-			}
-		</div>
-		if len(errors.InvalidCreds) > 0 {
-			<div class="text-sm text-error">{ errors.InvalidCreds }</div>
-		}
 		<button type="submit" class="btn btn-primary w-full">Login <i class="fa-solid fa-arrow-right"></i></button>
 		<div class="divider">OR</div>
 		<a href="/login/provider/google" class="btn btn-outline w-full">Login with<i class="fa-brands fa-google"></i></a>
 	</form>
 }
 
-type ResetPasswordErrors struct {
-    NewPassword string
-}
-
-templ ResetPassword() {
-    @layout.App(true) {
-        <div class="max-w-2xl w-full mx-auto mt-8">
-            <div>
-                <h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Reset Password</h1>
-                <div class="py-6">
-                    <div class="text-label mb-2">Enter your new password</div>
-                    @ResetPasswordForm(ResetPasswordErrors{})
-                </div>
-            </div>
-        </div>
-    }
-}
-
-templ ResetPasswordForm(errors ResetPasswordErrors) {
-    <form
-        hx-put="/auth/reset-password"
-        hx-swap="outerHTML"
-    >
-    <div class="mb-4">
-        <input
-            class="input input-bordered w-full max-w-sm"
-            name="password"
-            type="password"
-        />
-
-        if len(errors.NewPassword) > 0 {
-            <div class="test-sm text-error mt-1">{ errors.NewPassword }</div>
-        }
-    </div>
-    <button class="btn btn-primary">Update password</button>
-    </form>
-}
-
-templ ResetPasswordInitiated(email string) {
-    <div>Password reset link has been sent to <span class="text-info font-semibold">{ email }</span></div>
+templ MagicLinkSuccessful(email string) {
+    <div> An email has been sent to <span class="font-semibold text-success">{ email }</span> with a link to login.</div>
 }
 
 templ CallbackScript() {

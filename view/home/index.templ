@@ -1,6 +1,14 @@
 package home
 
-import "mengzhao/view/layout"
+import (
+    "mengzhao/view/layout"
+     "mengzhao/view"
+)
+
+
+templ UserLikes(amount int) {
+    <div>{ view.String(amount) } likes</div>
+}
 
 templ Index() {
     @layout.App(true) {
@@ -12,6 +20,13 @@ templ Index() {
                 Some amazing stuff here
             </h2>
             <a href="/generate" class="btn btn-primary">Generate images now<i class="fa-solid fa-arrow-right"></i></a>
+            <div
+                hx-get="/long-process"
+                hx-trigger="load"
+                hx-indicator="#spinner"
+                class="mt-20">
+                    <span id="spinner" class="loading loading-ring loading-lg htmx-indicator"></span>
+            </div>
         </div>
     }
 }

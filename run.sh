@@ -44,7 +44,8 @@ printf "ngrok URL:\t%s\n" "$PUBLIC_URL"
 
 export WEBHOOK_URL=$PUBLIC_URL/replicate/callback
 
-wgo -file=.go -file=.templ -file=.js -xfile=_templ.go npx tailwindcss -i view/css/app.css -o public/styles.css :: go run -tags dev . &
+wgo -file=.js npx tailwindcss -i view/css/app.css -o public/styles.css :: \
+  wgo -file=.go -file=.templ -file=.css -xfile=_templ.go go run -tags dev . &
 PID1=$!
 printf "wgo\t\tPID: %s\n" $PID1
 

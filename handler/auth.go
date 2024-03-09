@@ -1,10 +1,6 @@
 package handler
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -27,38 +23,6 @@ const (
 
 func SignupIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(w, r, auth.Signup())
-}
-
-func Signup(w http.ResponseWriter, r *http.Request) error {
-	params := auth.SignupParams{
-		Email:           r.FormValue("email"),
-		Password:        r.FormValue("password"),
-		ConfirmPassword: r.FormValue("confirmPassword"),
-	}
-
-	var errors auth.SignupErrors
-	validator := validate.New(&params, validate.Fields{
-		"Email":           validate.Rules(validate.Email),
-		"Password":        validate.Rules(validate.Password),
-		"ConfirmPassword": validate.Rules(validate.Equal(params.Password), validate.Message("Passwords don't match")),
-	})
-
-	if !validator.Validate(&errors) {
-		slog.Info("ERR", errors)
-		slog.Info("PARAM", params)
-		return render(w, r, auth.SignupForm(params, errors))
-	}
-
-	sbUser, err := sb.Client.Auth.SignUp(r.Context(), supabase.UserCredentials{
-		Email:    params.Email,
-		Password: params.Password,
-		//Data:     nil,
-	})
-	if err != nil {
-		return err
-	}
-
-	return render(w, r, auth.SignupSuccessful(sbUser.Email))
 }
 
 func AccountSetupIndex(w http.ResponseWriter, r *http.Request) error {
@@ -117,23 +81,24 @@ func LoginWithGoogle(w http.ResponseWriter, r *http.Request) error {
 
 func Login(w http.ResponseWriter, r *http.Request) error {
 	credentials := supabase.UserCredentials{
-		Email:    r.FormValue("email"),
-		Password: r.FormValue("password"),
+		Email: r.FormValue("email"),
 		//Data:     nil,
 	}
 
-	resp, err := sb.Client.Auth.SignIn(r.Context(), credentials)
+	err := sb.Client.Auth.SendMagicLink(r.Context(), credentials.Email)
 	if err != nil {
 		slog.Error("login attempt failure", "error", err)
-		errs := auth.LoginErrors{InvalidCreds: "The credentials you entered are invalid"}
+		errs := auth.LoginErrors{InvalidCreds: err.Error()}
 		return render(w, r, auth.LoginForm(credentials, errs))
 	}
 
-	if err := setAuthCookie(w, r, resp.AccessToken); err != nil {
-		return err
-	}
+	//if err := setAuthCookie(w, r, resp.AccessToken); err != nil {
+	//	return err
+	//}
 
-	return htmxRedirect(w, r, "/")
+	//return htmxRedirect(w, r, "/")
+
+	return render(w, r, auth.MagicLinkSuccessful(credentials.Email))
 }
 
 func AuthCallback(w http.ResponseWriter, r *http.Request) error {
@@ -165,61 +130,6 @@ func Logout(w http.ResponseWriter, r *http.Request) error {
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 	return nil
-}
-
-func ResetPasswordIndex(w http.ResponseWriter, r *http.Request) error {
-	return render(w, r, auth.ResetPassword())
-}
-
-func ResetPasswordRequest(w http.ResponseWriter, r *http.Request) error {
-	user := getAuthenticatedUser(r)
-	params := map[string]string{
-		"email":      user.Email,
-		"redirectTo": "http://localhost:42069/auth/reset-password",
-	}
-
-	payload, err := json.Marshal(params)
-	if err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s", sb.Client.BaseURL), bytes.NewReader(payload))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("apikey", os.Getenv("SUPABASE_SECRET"))
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		b, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		return fmt.Errorf("supabase password reset request failed; status: %d => %s", resp.StatusCode, string(b))
-	}
-
-	return render(w, r, auth.ResetPasswordInitiated(user.Email))
-}
-
-func ResetPasswordUpdate(w http.ResponseWriter, r *http.Request) error {
-	user := getAuthenticatedUser(r)
-	params := map[string]any{
-		"password": r.FormValue("password"),
-	}
-
-	_, err := sb.Client.Auth.UpdateUser(r.Context(), user.AccessToken, params)
-	if err != nil {
-		errors := auth.ResetPasswordErrors{NewPassword: "please enter a valid password"}
-		return render(w, r, auth.ResetPasswordForm(errors))
-	}
-
-	return htmxRedirect(w, r, "/")
 }
 
 func setAuthCookie(w http.ResponseWriter, r *http.Request, accessToken string) error {
