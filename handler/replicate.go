@@ -81,7 +81,7 @@ func ReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 					images[i].ImgLoc = newURL
 				}
 
-				if err := db.UpdateImage(r.Context(), &images[i]); err != nil {
+				if err := db.UpdateImage(r.Context(), tx, &images[i]); err != nil {
 					return err
 				}
 			}

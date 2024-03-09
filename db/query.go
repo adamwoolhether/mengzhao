@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
 
 	"mengzhao/types"
 )
@@ -49,8 +50,8 @@ func GetImagesByBatchID(ctx context.Context, batchID uuid.UUID) ([]types.Image, 
 	return images, nil
 }
 
-func CreateImage(ctx context.Context, image *types.Image) error {
-	_, err := Bun.NewInsert().Model(image).Exec(ctx)
+func CreateImage(ctx context.Context, tx bun.Tx, image *types.Image) error {
+	_, err := tx.NewInsert().Model(image).Exec(ctx)
 	if err != nil {
 		return nil
 	}
@@ -58,8 +59,8 @@ func CreateImage(ctx context.Context, image *types.Image) error {
 	return nil
 }
 
-func UpdateImage(ctx context.Context, image *types.Image) error {
-	_, err := Bun.NewUpdate().Model(image).WherePK().Exec(ctx)
+func UpdateImage(ctx context.Context, tx bun.Tx, image *types.Image) error {
+	_, err := tx.NewUpdate().Model(image).WherePK().Exec(ctx)
 	if err != nil {
 		return err
 	}

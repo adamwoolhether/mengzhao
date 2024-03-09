@@ -96,7 +96,7 @@ func GenerateCreate(w http.ResponseWriter, r *http.Request) error {
 				Prompt:  params.Prompt,
 			}
 
-			if err := db.CreateImage(r.Context(), &image); err != nil {
+			if err := db.CreateImage(r.Context(), tx, &image); err != nil {
 				return err
 			}
 		}
